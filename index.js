@@ -80,19 +80,9 @@ async function run() {
     app.delete('/bookVehicles/:id', async (req, res) => {
       const id = req.params.id;
       
-      try {
-        // MongoDB ObjectId ব্যবহার করে ডিলিট
-        const result = await BookVehicles.deleteOne({ _id: new ObjectId(id) });
-
-        if (result.deletedCount === 1) {
-          res.json({ message: 'Vehicle removed successfully' });
-        } else {
-          res.status(404).json({ message: 'Vehicle not found' })
-        }
-      } catch (error) {
-        console.error("Delete Error:", error);
-        res.status(400).json({ message: 'Invalid ID format or deletion error' });
-      }
+      const query = { _id: new ObjectId(id) };
+      const result = await BookVehicles.deleteOne(query)
+      res.send(result)
     });
 
     console.log("MongoDB connected successfully!");
