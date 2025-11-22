@@ -66,7 +66,13 @@ async function run() {
 
     // GET all booked vehicles
     app.get('/bookVehicles', async (req, res) => {
-      const result = await BookVehicles.find().toArray();
+      const email = req.query.userEmail;
+      const query = {};
+      if (email) {
+        query.userEmail = email;
+      }
+      
+      const result = await BookVehicles.find(query).toArray();
       res.send(result)
     })
 
