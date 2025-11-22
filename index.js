@@ -85,6 +85,25 @@ async function run() {
       res.send(result)
     });
 
+    app.delete('/allVehicles/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await productCollection.deleteOne(query);
+      res.send(result)
+    })
+
+    app.put('/allVehicles/:id', async (req, res) => {
+      const id = req.params.id;
+      const data = req.body;
+      const query = { _id: new ObjectId(id) };
+      const updateService = {
+        $set: data
+      }
+      const result = await productCollection.updateOne(query, updateService);
+      res.send(result)
+
+    })
+
     console.log("MongoDB connected successfully!");
   } finally {
     // Do not close client
