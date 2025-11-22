@@ -66,10 +66,10 @@ async function run() {
 
     // GET all booked vehicles
     app.get('/bookVehicles', async (req, res) => {
-      const email = req.query.userEmail;
+      const email = req.query.email;
       const query = {};
       if (email) {
-        query.userEmail = email;
+        query.email = email;
       }
       
       const result = await BookVehicles.find(query).toArray();
