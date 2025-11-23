@@ -1,6 +1,6 @@
-require('dotenv').config()
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const app = express();
@@ -124,4 +124,6 @@ async function run() {
 }
 run().catch(console.dir);
 
-app.listen(port, () => console.log(`Server running on port ${port}`));
+app.listen(port, () => {
+  console.log(`Smart server is running on port: ${port}`)
+})
