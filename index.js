@@ -30,32 +30,33 @@ async function run() {
       res.send(result);
     });
 
-  
-app.post('/bookVehicles', async (req, res) => {
-  try {
-    const bookVehiclesData = req.body;
 
-    const { vehicleId, email } = bookVehiclesData;
-    if (!vehicleId || !email) {
-      return res.status(400).send({ message: 'vehicleId and email are required' });
-    }
+    app.post('/bookVehicles', async (req, res) => {
+      try {
+        const bookVehiclesData = req.body;
 
-    const exists = await BookVehicles.findOne({ vehicleId: vehicleId, email: email });
-    if (exists) {
-      return res.status(400).send({ message: 'You already booked this vehicle.' });
-    }
+        const { vehicleId, email } = bookVehiclesData;
+        if (!vehicleId || !email) {
+          return res.status(400).send({ message: 'vehicleId and email are required' });
+        }
 
-   
-    const result = await BookVehicles.insertOne(bookVehiclesData);
-    res.status(201).send({ message: 'Vehicle booked successfully', result });
-  } catch (err) {
-    console.error('Booking POST error:', err);
-    res.status(500).send({ message: 'Server error while booking' });
-  }
-});
+        const exists = await BookVehicles.findOne({ vehicleId: vehicleId, email: email });
+        if (exists) {
+          return res.status(400).send({ message: 'You already booked this vehicle.' });
+        }
+
+
+        const result = await BookVehicles.insertOne(bookVehiclesData);
+        res.status(201).send({ message: 'Vehicle booked successfully', result });
+      } catch (err) {
+        console.error('Booking POST error:', err);
+        res.status(500).send({ message: 'Server error while booking' });
+      }
+    });
 
 
     app.get('/allVehicles', async (req, res) => {
+     
       const email = req.query.userEmail;
       const query = {};
       if (email) {
@@ -84,14 +85,14 @@ app.post('/bookVehicles', async (req, res) => {
       if (email) {
         query.email = email;
       }
-      
+
       const result = await BookVehicles.find(query).toArray();
       res.send(result)
     })
 
     app.delete('/bookVehicles/:id', async (req, res) => {
       const id = req.params.id;
-      
+
       const query = { _id: new ObjectId(id) };
       const result = await BookVehicles.deleteOne(query)
       res.send(result)
