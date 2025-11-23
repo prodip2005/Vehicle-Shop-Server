@@ -22,24 +22,37 @@ async function run() {
     const productCollection = db.collection('all_vehicles');
     const BookVehicles = db.collection('book_vehicle');
 
-    // POST new vehicle
     app.post('/allVehicles', async (req, res) => {
       const newVehicle = req.body;
       const result = await productCollection.insertOne(newVehicle);
       res.send(result);
     });
 
-    // POST new booking
-    app.post('/bookVehicles', async (req, res) => {
-      const bookVehiclesData = req.body;
-      
-      // এখানে _id চেক না করে, গাড়ির আইডি এবং ইউজার ইমেইল দিয়ে চেক করা উচিত যদি আপনি ডুপ্লিকেট বুকিং আটকাতে চান।
-      // ফরমেটে MongoDB নিজে _id দেবে, তাই সরাসরি ইনসার্ট করছি।
-      const result = await BookVehicles.insertOne(bookVehiclesData);
-      res.send({ message: 'Vehicle booked successfully', result });
-    });
+  
+app.post('/bookVehicles', async (req, res) => {
+  try {
+    const bookVehiclesData = req.body;
 
-    // GET all vehicles or filter by userEmail
+    const { vehicleId, email } = bookVehiclesData;
+    if (!vehicleId || !email) {
+      return res.status(400).send({ message: 'vehicleId and email are required' });
+    }
+
+    const exists = await BookVehicles.findOne({ vehicleId: vehicleId, email: email });
+    if (exists) {
+      return res.status(400).send({ message: 'You already booked this vehicle.' });
+    }
+
+   
+    const result = await BookVehicles.insertOne(bookVehiclesData);
+    res.status(201).send({ message: 'Vehicle booked successfully', result });
+  } catch (err) {
+    console.error('Booking POST error:', err);
+    res.status(500).send({ message: 'Server error while booking' });
+  }
+});
+
+
     app.get('/allVehicles', async (req, res) => {
       const email = req.query.userEmail;
       const query = {};
@@ -51,7 +64,6 @@ async function run() {
       res.send(result);
     });
 
-    // GET single vehicle by ID
     app.get('/allVehicles/:id', async (req, res) => {
       const id = req.params.id;
       try {
@@ -64,7 +76,6 @@ async function run() {
       }
     });
 
-    // GET all booked vehicles
     app.get('/bookVehicles', async (req, res) => {
       const email = req.query.email;
       const query = {};
@@ -76,7 +87,6 @@ async function run() {
       res.send(result)
     })
 
-    // DELETE endpoint
     app.delete('/bookVehicles/:id', async (req, res) => {
       const id = req.params.id;
       
