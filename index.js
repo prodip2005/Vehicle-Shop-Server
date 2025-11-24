@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
     const db = client.db('vehicle_shop');
     const productCollection = db.collection('all_vehicles');
     const BookVehicles = db.collection('book_vehicle');
